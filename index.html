@@ -43,7 +43,7 @@
     }
     .ar-button:hover { filter: brightness(1.15); }
 
-    /* Toast (твой «баннер») */
+    /* Toast */
     .toast {
       position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
       background: rgba(0,0,0,.92); color: #fff; padding: 12px 16px;
@@ -77,7 +77,7 @@
       auto-rotate>
     </model-viewer>
 
-    <!-- Кнопка для открытия в AR (Quick Look) -->
+    <!-- Кнопка для открытия в AR -->
     <a
       class="ar-button"
       id="ar-link"
@@ -88,14 +88,14 @@
     </a>
   </div>
 
-  <!-- Твой «баннер» (toast) -->
+  <!-- Баннер (toast) -->
   <div id="toast" class="toast" role="status" aria-live="polite">
     <span id="toast-text">Кнопка в AR нажата!</span>
     <button class="toast__close" id="toast-close" aria-label="Закрыть">✕</button>
   </div>
 
   <script>
-    // Показать/скрыть баннер
+    // Баннер
     const toast = document.getElementById('toast');
     const toastText = document.getElementById('toast-text');
     const toastClose = document.getElementById('toast-close');
@@ -112,19 +112,16 @@
       clearTimeout(toastTimer);
     });
 
-    // Ловим сообщения от Quick Look (иногда приходит на сам <a>, иногда — на window)
+    // Логика обработки события, как в старом коде
     const linkElement = document.getElementById('ar-link');
-
     function handleQuickLookMessage(event) {
-      // в проде можно проверять event.origin при необходимости
       if (event && event.data === "_apple_ar_quicklook_button_tapped") {
-        showBanner("Кнопка в AR нажата!"); // твой баннер
+        showBanner("Кнопка в AR нажата!");
       }
     }
 
-    // На сам якорь
+    // Ловим событие и на <a>, и на window
     linkElement.addEventListener('message', handleQuickLookMessage, false);
-    // И на окно (надёжный дубликат)
     window.addEventListener('message', handleQuickLookMessage, false);
   </script>
 </body>

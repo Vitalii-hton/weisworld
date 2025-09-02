@@ -6,7 +6,7 @@
   <title>AR Quick Look — Archangel Michael</title>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <style>
-    /* Add your custom styles here */
+    /* Стили кнопки */
     .ar-button {
       background-color: #007bff;
       color: white;
@@ -15,33 +15,40 @@
       border-radius: 5px;
       cursor: pointer;
       font-size: 16px;
+      margin-top: 20px;
     }
     .ar-button:hover {
       background-color: #0056b3;
+    }
+    model-viewer {
+      width: 100%;
+      max-width: 600px;
+      height: 500px;
+      border-radius: 12px;
+      background: #f0f0f0;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body style="text-align:center; padding:50px; font-family:sans-serif;">
   <h1>Просмотр 3D моделі в AR</h1>
-  <p>Нажмите на кнопку ниже, чтобы открыть модель в AR Quick Look на iPhone/iPad:</p>
+  <p>Вы можете вращать модель прямо здесь или открыть AR на iPhone/iPad:</p>
 
-  <!-- Custom AR Button -->
+  <!-- Кнопка для AR Quick Look -->
   <button id="ar-button" class="ar-button">
     📱 Открыть в AR
   </button>
 
-  <!-- Hidden model-viewer -->
+  <!-- 3D-предпросмотр (GLB) -->
   <model-viewer
     id="ar-viewer"
-    src="https://vitalii-hton.github.io/weisworld/ar17.usdz"
-    ios-src="https://vitalii-hton.github.io/weisworld/ar17.usdz"
+    src="https://raw.githubusercontent.com/Vitalii-hton/weisworld/main/ar.glb"
     alt="3D Model"
     ar
     ar-modes="quick-look"
     camera-controls
     auto-rotate
-    style="display: none;"
-    poster="https://raw.githubusercontent.com/Vitalii-hton/weisworld/main/IMG_7353.JPG">
+    reveal="interaction">
   </model-viewer>
 
   <script>
@@ -49,8 +56,7 @@
     const arViewer = document.getElementById('ar-viewer');
 
     arButton.addEventListener('click', () => {
-      arViewer.style.display = 'block'; // Make the model-viewer visible
-      arViewer.activateAR(); // Activate AR
+      arViewer.activateAR(); // открыть AR Quick Look
     });
   </script>
 </body>

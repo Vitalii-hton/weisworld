@@ -4,8 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AR Quick Look — MOON</title>
+  
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
   <style>
+    /* Стили для кнопок: размеры, цвета и анимация наведения */
     .ar-button {
       background-color: #e40b29;
       color: white;
@@ -15,7 +18,7 @@
       cursor: pointer;
       font-size: 16px;
       margin-top: 20px;
-      display: none; /* Скрыты по умолчанию, включаются скриптом */
+      display: none; /* По умолчанию скрываем кнопки, чтобы показать только нужную через JS */
       font-weight: bold;
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -23,6 +26,8 @@
     .ar-button:hover {
       background-color: #b30920;
     }
+
+    /* Оформление окна предпросмотра 3D модели */
     model-viewer {
       width: 100%;
       max-width: 600px;
@@ -60,80 +65,92 @@
   </model-viewer>
 
   <script>
+    // Поиск элементов на странице для дальнейшей работы с ними
     const arViewer = document.getElementById('ar-viewer');
     const iosBtn = document.getElementById('ios-button');
     const androidBtn = document.getElementById('android-button');
     const openBtn = document.getElementById('open-browser');
 
+    // Ссылка на товар, которая будет открываться при клике внутри AR
     const productUrl = "https://moonoralbeauty.com/products/moon-x-hello-kitty%C2%AE-teeth-whitening-pen-duo";
+    
+    // Получение информации о браузере и устройстве пользователя (User Agent)
     const ua = navigator.userAgent || navigator.vendor || window.opera;
 
-    // Проверки устройства
+    // Функции-флаги для определения среды: Instagram, iOS или Android
     const isInstagram = /Instagram|FBAN|FBAV|FBSV|FB_IAB/i.test(ua);
     const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
     const isAndroid = /Android/.test(ua);
 
     // ===============================
-    // 1. ЛОГИКА ОТОБРАЖЕНИЯ КНОПОК
+    // 1. ЛОГИКА ОТОБРАЖЕНИЯ: Проверяем устройство и показываем подходящую кнопку
     // ===============================
     if (isInstagram) {
+      // Если открыто в Instagram — приоритет на кнопку выхода в браузер
       openBtn.style.display = 'inline-block';
     } else if (isIOS) {
+      // Если обычный браузер на iOS — показываем кнопку для Apple Quick Look
       iosBtn.style.display = 'inline-block';
     } else if (isAndroid) {
+      // Если обычный браузер на Android — показываем кнопку для Google Scene Viewer
       androidBtn.style.display = 'inline-block';
     } else {
-      // Для ПК или других устройств показываем обычную кнопку
+      // Для всех остальных (десктоп и т.д.) просто даем общую кнопку запуска
       iosBtn.innerText = "Open AR";
       iosBtn.style.display = 'inline-block';
     }
 
     // ===============================
-    // 2. ОБРАБОТЧИКИ НАЖАТИЙ
+    // 2. ОБРАБОТЧИКИ НАЖАТИЙ: Что происходит при клике на кнопки
     // ===============================
 
-    // Запуск для iOS
+    // Запуск AR для iPhone: просто вызывает системное окно Quick Look
     iosBtn.addEventListener('click', () => {
       arViewer.activateAR();
     });
 
-    // Запуск для Android (с пробросом ссылки в Scene Viewer)
+    // Запуск AR для Android: формирует сложную ссылку с метаданными
     androidBtn.addEventListener('click', () => {
       const baseSrc = "https://vitalii-hton.github.io/weisworld1/kitty ar2.glb";
-      // Формируем спец-ссылку: добавляем интенты для кнопки "Купить" внутри Android AR
+      
+      // Склеиваем путь к модели с параметрами: включаем кнопку (always-show) и передаем ссылку на товар (link)
       const sceneViewerUrl = baseSrc + "#intent-action-always-show=1&link=" + encodeURIComponent(productUrl) + "&title=Moon%20x%20Hello%20Kitty";
       
+      // Обновляем источник модели в компоненте
       arViewer.src = sceneViewerUrl;
       
-      // Небольшая задержка, чтобы модель успела обновить src перед запуском
+      // Небольшая пауза для обновления данных в памяти браузера перед запуском AR
       setTimeout(() => {
         arViewer.activateAR();
       }, 50);
     });
 
-    // Событие для кнопки ВНУТРИ Quick Look на iOS
+    // Специальное событие для iOS: отслеживает нажатие на кнопку "баннер" внутри режима дополненной реальности
     arViewer.addEventListener('quick-look-button-tapped', () => {
       window.open(productUrl, '_blank');
     });
 
     // ===============================
-    // 3. АВТОЗАПУСК (через 1.5 сек)
+    // 3. АВТОЗАПУСК: Попытка запустить AR автоматически через 1.5 секунды после загрузки
     // ===============================
     window.addEventListener("load", () => {
-      if (!isInstagram) { // Не автозапускаем в Instagram, чтобы не пугать пользователя
+      // Не запускаем авто-AR внутри Instagram, так как это часто блокируется системой
+      if (!isInstagram) { 
         setTimeout(() => {
           if (isAndroid) {
-            androidBtn.click();
+            androidBtn.click(); // На Android запускаем через клик, чтобы применились параметры ссылки
           } else {
-            arViewer.activateAR();
+            arViewer.activateAR(); // На iOS просто активируем
           }
         }, 1500);
       }
     });
 
     // ===============================
-    // 4. ЛОГИКА ВНЕШНЕГО БРАУЗЕРА
+    // 4. ВЫХОД ИЗ СОЦСЕТЕЙ: Логика открытия страницы во внешнем браузере
     // ===============================
+    
+    // Вспомогательная функция для создания невидимой ссылки и имитации клика по ней
     function tryOpen(urlToOpen) {
       const a = document.createElement('a');
       a.href = urlToOpen;
@@ -144,19 +161,22 @@
       setTimeout(() => { document.body.removeChild(a); }, 2000);
     }
 
+    // Обработчик кнопки "Open in Safari/Chrome"
     openBtn.addEventListener('click', (e) => {
       e.preventDefault();
       const currentUrl = window.location.href;
       
+      // Схемы для принудительного открытия в системных браузерах
       const xSafari = 'x-safari-https://' + currentUrl.replace(/^https?:\/\//i, '');
       const intentUrl = 'intent://' + currentUrl.replace(/^https?:\/\//i, '') + '#Intent;scheme=https;package=com.android.chrome;end';
 
       if (isIOS) {
-        tryOpen(xSafari);
+        tryOpen(xSafari); // Пытаемся вызвать Safari через протокол x-safari
       } else {
-        tryOpen(intentUrl);
+        tryOpen(intentUrl); // Пытаемся вызвать Chrome через Android Intent
       }
 
+      // Если через 1.6 сек пользователь всё еще здесь — предлагаем инструкцию
       setTimeout(() => {
         if (confirm('Если сайт всё ещё открыт в приложении — открыть инструкцию?')) {
           window.location.href = '/open-in-safari-instructions.html';

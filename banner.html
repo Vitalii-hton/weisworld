@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <style>
-    /* === ГЛОБАЛЬНОЕ ЦЕНТРИРОВАНИЕ === */
+    /* === ЦЕНТРИРОВАНИЕ КОНТЕЙНЕРА === */
     html, body {
       margin: 0;
       padding: 0;
@@ -13,102 +13,111 @@
       background: transparent !important;
       overflow: hidden;
       display: flex;
-      justify-content: center; /* Центр по горизонтали */
-      align-items: center;     /* Центр по вертикали */
+      justify-content: center;
+      align-items: center;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
     }
 
-    /* Общие стили для сцен */
     .scene {
       position: absolute;
       width: 90%;
-      max-width: 380px;
+      max-width: 400px; /* Немного увеличили макс. ширину */
       opacity: 0;
       pointer-events: none;
       transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-      transform: scale(0.95);
+      transform: translateY(10px);
     }
 
     .scene.active {
       opacity: 1;
       pointer-events: auto;
-      transform: scale(1);
+      transform: translateY(0);
     }
 
-    /* === СТИЛЬ СТЕКЛЯННОЙ КАРТОЧКИ (ДЛЯ ОБОИХ БАННЕРОВ) === */
+    /* === ОБНОВЛЕННАЯ КАРТОЧКА С БОЛЬШИМИ ОТСТУПАМИ === */
     .banner-card {
-      background: rgba(255, 255, 255, 0.01); /* Прозрачный фон */
-      backdrop-filter: blur(25px) saturate(180%);
-      -webkit-backdrop-filter: blur(25px) saturate(180%);
-      border: 0.5px solid rgba(255, 255, 255, 0.2);
-      border-radius: 24px;
-      padding: 24px 20px; /* Увеличили padding для "воздуха" */
+      background: rgba(255, 255, 255, 0.1); 
+      backdrop-filter: blur(30px) saturate(210%);
+      -webkit-backdrop-filter: blur(30px) saturate(210%);
+      border: 0.5px solid rgba(255, 255, 255, 0.25);
+      border-radius: 32px; /* Более округлые углы */
+      
+      /* УВЕЛИЧЕННЫЕ ОТСТУПЫ: 40px сверху/снизу, 30px по бокам */
+      padding: 40px 30px; 
+      
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       align-items: center;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
       box-sizing: border-box;
     }
 
-    /* Специальный стиль для центрирования текста в инструкции */
-    .instruction-layout {
-      flex-direction: column;
-      justify-content: center;
-      text-align: center;
+    /* Стили для горизонтального расположения (кнопка покупки) */
+    .buy-layout {
+      flex-direction: row;
+      justify-content: space-between;
+      text-align: left;
+      align-items: center;
+      padding: 30px 25px; /* Чуть меньше для компактности кнопки */
     }
 
-    /* === ТЕКСТ И ЭЛЕМЕНТЫ === */
+    /* === ТИПОГРАФИКА === */
     .brand-title {
       color: #000000;
-      font-size: 19px;
+      font-size: 20px;
       font-weight: 700;
-      letter-spacing: -0.4px;
-      margin-bottom: 4px;
+      letter-spacing: -0.5px;
+      margin: 0 0 8px 0;
+      line-height: 1.2;
     }
 
-    .product-info, .instruction-text {
+    .instruction-text {
       color: #000000;
-      font-size: 15px;
-      opacity: 0.6;
+      font-size: 16px;
+      line-height: 1.4;
+      opacity: 0.7;
       margin: 0;
     }
 
+    .product-info {
+      font-size: 15px;
+      opacity: 0.6;
+    }
+
     .url-info {
-      color: #000000;
-      font-size: 12px;
+      font-size: 13px;
       opacity: 0.4;
-      margin-top: 2px;
+      margin-top: 4px;
     }
 
     .buy-button {
       color: #007AFF;
       text-decoration: none;
       font-weight: 600;
-      font-size: 18px;
+      font-size: 19px;
       padding-left: 15px;
     }
 
-    /* Анимация точек/пальцев */
+    /* Анимация точек */
     .dots-container {
       display: flex;
       gap: 12px;
-      margin-bottom: 15px;
-      justify-content: center;
+      margin-bottom: 20px;
     }
 
     .dot {
-      width: 10px;
-      height: 10px;
-      background: white;
+      width: 12px;
+      height: 12px;
+      background: #000; /* Черные точки для лучшей видимости на стекле */
       border-radius: 50%;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-      animation: pulse 1.5s infinite ease-in-out;
+      opacity: 0.3;
+      animation: pulse 1.8s infinite ease-in-out;
     }
 
     @keyframes pulse {
-      0% { transform: scale(1); opacity: 0.5; }
-      50% { transform: scale(1.2); opacity: 1; }
-      100% { transform: scale(1); opacity: 0.5; }
+      0%, 100% { transform: scale(1); opacity: 0.2; }
+      50% { transform: scale(1.3); opacity: 0.6; }
     }
 
   </style>
@@ -116,19 +125,19 @@
 <body>
 
   <div id="scene-instruction" class="scene active">
-    <div class="banner-card instruction-layout">
+    <div class="banner-card">
       <div class="dots-container">
         <div class="dot"></div>
-        <div class="dot" style="animation-delay: 0.2s;"></div>
+        <div class="dot" style="animation-delay: 0.3s;"></div>
       </div>
-      <div class="brand-title">Scale & Move</div>
-      <div class="instruction-text">Pinch to resize object</div>
+      <div class="brand-title">Find a surface to place the model</div>
+      <div class="instruction-text">Pinch to resize</div>
     </div>
   </div>
 
   <div id="scene-buy" class="scene">
-    <div class="banner-card">
-      <div class="text-content" style="text-align: left;">
+    <div class="banner-card buy-layout">
+      <div class="text-content">
         <div class="brand-title" style="margin:0;">Moon</div>
         <div class="product-info">Oral beauty, $39.99</div>
         <div class="url-info">vitalii-hton.github.io</div>
@@ -141,7 +150,7 @@
 
   <script>
     window.addEventListener('load', () => {
-      // Смена через 6 секунд
+      // Переключение баннера через 8 секунд
       setTimeout(() => {
         const inst = document.getElementById('scene-instruction');
         const buy = document.getElementById('scene-buy');
@@ -151,7 +160,7 @@
         setTimeout(() => {
           buy.classList.add('active');
         }, 600);
-      }, 6000);
+      }, 8000);
     });
   </script>
 

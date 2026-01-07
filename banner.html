@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <style>
-    /* === 1. УЛЬТРА-СБРОС ФОНА === */
+    /* === 1. ГЛОБАЛЬНЫЕ НАСТРОЙКИ ПРОЗРАЧНОСТИ === */
     :root {
-       color-scheme: only light; /* Запрещаем системе переключать темы */
+       color-scheme: only light;
     }
 
     * {
@@ -23,70 +23,80 @@
       overflow: hidden;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: center; /* Центрирование карточки по вертикали */
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-      pointer-events: none; /* Тело страницы не ловит клики */
+      pointer-events: none;
     }
 
     /* === 2. СТИЛИ СЦЕН === */
     .scene {
       position: absolute;
-      width: 90%;
+      width: 95%; /* Чуть шире для маленького формата */
       max-width: 380px;
       opacity: 0;
       transition: all 0.5s ease;
+      display: flex;
+      justify-content: center;
     }
 
     .scene.active {
       opacity: 1;
-      pointer-events: auto; /* Только активная сцена ловит клики */
+      pointer-events: auto;
     }
 
-    /* === 3. КАРТОЧКА БЕЗ СИСТЕМНОГО ФОНА === */
+    /* === 3. ГЕОМЕТРИЯ КАРТОЧКИ === */
     .banner-card {
-      /* ВАЖНО: Мы убираем backdrop-filter и background полностью */
+      width: 100%;
       background: none !important;
       backdrop-filter: none !important;
       -webkit-backdrop-filter: none !important;
-      
-      /* Добавляем очень слабую тень только тексту, чтобы он не терялся */
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-      
       border: none !important;
-      border-radius: 24px;
-      padding: 16px 20px;
+      padding: 10px 15px; /* Уменьшенные отступы для малого баннера */
       display: flex;
       flex-direction: column;
-      align-items: center;
-      text-align: center;
+      align-items: center; /* Выравнивание элементов по вертикальной оси */
       box-sizing: border-box;
     }
 
+    /* Специфичный макет для первой сцены */
+    .instruction-layout {
+      align-items: center; 
+    }
+
+    .text-block-down {
+      text-align: left; /* Текст не центрирован по горизонтали */
+      width: 100%;
+      margin-top: 15px; /* Смещение текста вниз относительно анимации */
+    }
+
+    /* Макет для кнопки покупки */
     .buy-layout {
       flex-direction: row;
       justify-content: space-between;
-      text-align: left;
+      align-items: center;
       width: 100%;
+      text-align: left;
     }
 
-    /* === 4. ТЕКСТ (С ТЕНЬЮ ДЛЯ ЧИТАЕМОСТИ) === */
+    /* === 4. ТЕКСТ (УМЕНЬШЕН В 2 РАЗА) === */
     .brand-title {
       color: #000000;
-      font-size: 18px;
+      font-size: 10px; /* Было 18px */
       font-weight: 800;
       margin: 0;
-      text-shadow: 0 0 15px rgba(255,255,255,0.8); /* Белое свечение вокруг букв */
+      text-shadow: 0 0 10px rgba(255,255,255,0.8);
     }
 
     .instruction-text, .product-info {
       color: #000000;
-      font-size: 14px;
-      font-weight: 500;
-      margin: 4px 0 0;
+      font-size: 8px; /* Было 14px */
+      font-weight: 600;
+      margin: 2px 0 0;
     }
 
     .url-info {
-      font-size: 11px;
+      font-size: 7px;
       opacity: 0.5;
       color: #000;
     }
@@ -95,42 +105,49 @@
       color: #007AFF;
       text-decoration: none;
       font-weight: 700;
-      font-size: 19px;
-      background: white !important; /* Кнопку оставим видимой */
-      padding: 8px 16px;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      font-size: 12px; /* Также уменьшена для пропорции */
+      background: white !important;
+      padding: 4px 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
-    /* === АНИМАЦИЯ === */
+    /* === 5. АНИМАЦИЯ DOTS (ЦЕНТРИРОВАНА) === */
     .dots-container {
       display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
+      gap: 6px;
+      justify-content: center; /* Центрирование точек */
+      width: 100%;
     }
+
     .dot {
-      width: 10px; height: 10px;
+      width: 6px; 
+      height: 6px;
       background: #000;
       border-radius: 50%;
       animation: jump 1.4s infinite ease-in-out;
     }
+
     .dot:nth-child(2) { animation-delay: 0.2s; }
+
     @keyframes jump {
       0%, 100% { transform: translateY(0); opacity: 0.3; }
-      50% { transform: translateY(-6px); opacity: 0.8; }
+      50% { transform: translateY(-4px); opacity: 0.8; }
     }
   </style>
 </head>
 <body>
 
   <div id="scene-instruction" class="scene active">
-    <div class="banner-card">
+    <div class="banner-card instruction-layout">
       <div class="dots-container">
         <div class="dot"></div>
         <div class="dot"></div>
       </div>
-      <div class="brand-title">Find a surface to place the model</div>
-      <div class="instruction-text">Pinch to resize</div>
+      <div class="text-block-down">
+        <div class="brand-title">Find a surface to place the model</div>
+        <div class="instruction-text">Pinch to resize</div>
+      </div>
     </div>
   </div>
 

@@ -2,26 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
   <style>
-    /* === ГЕОМЕТРИЯ И ЦЕНТРИРОВАНИЕ ИЗ ВАШЕГО КОДА === */
+    /* === ГЛОБАЛЬНЫЕ НАСТРОЙКИ ДЛЯ ПРОЗРАЧНОСТИ === */
+    :root {
+       color-scheme: light dark; /* Позволяет системе понимать, что мы готовы к любому фону */
+    }
+
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
-      background: transparent !important;
+      /* Ключевая строка: явный прозрачный цвет фона */
+      background-color: rgba(0,0,0,0) !important;
+      background: transparent !important; 
       overflow: hidden;
       display: flex;
       justify-content: center;
       align-items: center;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+      /* Дополнительный хак для iOS */
+      -webkit-text-size-adjust: 100%;
     }
 
+    /* === СТИЛИ СЦЕН === */
     .scene {
       position: absolute;
-      width: 90%; /* Ширина из вашего кода */
-      max-width: 380px; /* Макс. ширина из вашего кода */
+      width: 90%;
+      max-width: 380px;
       opacity: 0;
       transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
       pointer-events: none;
@@ -32,14 +41,14 @@
       pointer-events: auto;
     }
 
-    /* === СТЕКЛЯННАЯ КАРТОЧКА (ОТСТУПЫ 16px 20px, РАДИУС 24px) === */
+    /* === СТЕКЛЯННАЯ КАРТОЧКА === */
     .banner-card {
       background: rgba(255, 255, 255, 0.01); 
       backdrop-filter: blur(25px) saturate(180%);
       -webkit-backdrop-filter: blur(25px) saturate(180%);
       border: 0.5px solid rgba(255, 255, 255, 0.2);
-      border-radius: 24px; /* Радиус из вашего кода */
-      padding: 16px 20px; /* Отступы из вашего кода */
+      border-radius: 24px;
+      padding: 16px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -55,10 +64,10 @@
       text-align: left;
     }
 
-    /* === РАЗМЕРЫ ТЕКСТА (18px / 14px) === */
+    /* === ТЕКСТ === */
     .brand-title {
       color: #000000;
-      font-size: 18px; /* Размер из вашего кода */
+      font-size: 18px;
       font-weight: 700;
       margin: 0;
       line-height: 1.2;
@@ -66,7 +75,7 @@
 
     .instruction-text {
       color: #000000;
-      font-size: 14px; /* Размер из вашего кода */
+      font-size: 14px;
       opacity: 0.6;
       margin: 4px 0 0;
     }
@@ -81,7 +90,7 @@
       font-size: 18px;
     }
 
-    /* === ВОЗВРАЩЕННАЯ АНИМАЦИЯ ТОЧЕК === */
+    /* === АНИМАЦИЯ DOTS === */
     .dots-container {
       display: flex;
       gap: 8px;
@@ -103,7 +112,6 @@
       0%, 100% { transform: translateY(0); opacity: 0.2; }
       50% { transform: translateY(-5px); opacity: 0.5; }
     }
-
   </style>
 </head>
 <body>
@@ -144,7 +152,7 @@
           inst.classList.remove('active');
           buy.classList.add('active');
         }, 600);
-      }, 7000); // Показываем кнопку через 7 секунд
+      }, 7000); 
     });
   </script>
 

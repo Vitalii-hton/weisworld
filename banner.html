@@ -6,7 +6,7 @@
   <style>
     /* === 1. ГЛОБАЛЬНЫЕ НАСТРОЙКИ ПРОЗРАЧНОСТИ === */
     :root {
-       color-scheme: only light;
+      color-scheme: only light;
     }
 
     * {
@@ -23,7 +23,7 @@
       overflow: hidden;
       display: flex;
       justify-content: center;
-      align-items: center; /* Центрирование карточки по вертикали */
+      align-items: center;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
       pointer-events: none;
     }
@@ -31,7 +31,7 @@
     /* === 2. СТИЛИ СЦЕН === */
     .scene {
       position: absolute;
-      width: 95%; /* Чуть шире для маленького формата */
+      width: 95%;
       max-width: 380px;
       opacity: 0;
       transition: all 0.5s ease;
@@ -52,25 +52,23 @@
       -webkit-backdrop-filter: none !important;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
       border: none !important;
-      padding: 10px 15px; /* Уменьшенные отступы для малого баннера */
+      padding: 10px 15px;
       display: flex;
       flex-direction: column;
-      align-items: center; /* Выравнивание элементов по вертикальной оси */
+      align-items: center;
       box-sizing: border-box;
     }
 
-    /* Специфичный макет для первой сцены */
     .instruction-layout {
-      align-items: center; 
+      align-items: center;
     }
 
     .text-block-down {
-      text-align: center; /* Текст не центрирован по горизонтали */
+      text-align: center;
       width: 100%;
-      margin-top: 15px; /* Смещение текста вниз относительно анимации */
+      margin-top: 15px;
     }
 
-    /* Макет для кнопки покупки */
     .buy-layout {
       flex-direction: row;
       justify-content: space-between;
@@ -79,102 +77,6 @@
       text-align: left;
     }
 
-    /* === 4. ТЕКСТ (УМЕНЬШЕН В 2 РАЗА) === */
+    /* === 4. ТЕКСТ === */
     .brand-title {
-      color: #000000;
-      font-size: 16px; /* Было 18px */
-      font-weight: 800;
-      margin: 0;
-      text-shadow: 0 0 10px rgba(255,255,255,0.8);
-    }
-
-    .instruction-text, .product-info {
-      color: #000000;
-      font-size: 12px; /* Было 14px */
-      font-weight: 600;
-      margin: 2px 0 0;
-    }
-
-    .url-info {
-      font-size: 7px;
-      opacity: 0.5;
       color: #000;
-    }
-
-    .buy-button {
-      color: #007AFF;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 16px; /* Также уменьшена для пропорции */
-      background: white !important;
-      padding: 4px 10px;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    /* === 5. АНИМАЦИЯ DOTS (ЦЕНТРИРОВАНА) === */
-    .dots-container {
-      display: flex;
-      gap: 6px;
-      justify-content: center; /* Центрирование точек */
-      width: 100%;
-    }
-
-    .dot {
-      width: 6px; 
-      height: 6px;
-      background: #000;
-      border-radius: 50%;
-      animation: jump 1.4s infinite ease-in-out;
-    }
-
-    .dot:nth-child(2) { animation-delay: 0.2s; }
-
-    @keyframes jump {
-      0%, 100% { transform: translateY(0); opacity: 0.3; }
-      50% { transform: translateY(-4px); opacity: 0.8; }
-    }
-  </style>
-</head>
-<body>
-
-  <div id="scene-instruction" class="scene active">
-    <div class="banner-card instruction-layout">
-      <div class="dots-container">
-        <div class="dot"></div>
-        <div class="dot"></div>
-      </div>
-      <div class="text-block-down">
-        <div class="brand-title">Find a surface to place the model</div>
-        <div class="instruction-text">Pinch to resize</div>
-      </div>
-    </div>
-  </div>
-
-  <div id="scene-buy" class="scene">
-    <div class="banner-card buy-layout">
-      <div class="text-content">
-        <div class="brand-title">Moon</div>
-        <div class="product-info">Oral beauty, $39.99</div>
-        <div class="url-info">moonoralbeauty.com</div>
-      </div>
-      <a href="https://www.weis.world/ua/campaign" class="buy-button">Buy</a>
-    </div>
-  </div>
-
-  <script>
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        const inst = document.getElementById('scene-instruction');
-        const buy = document.getElementById('scene-buy');
-        inst.style.opacity = '0';
-        setTimeout(() => {
-          inst.classList.remove('active');
-          buy.classList.add('active');
-        }, 500);
-      }, 7000); 
-    });
-  </script>
-
-</body>
-</html>

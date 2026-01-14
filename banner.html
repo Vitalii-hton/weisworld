@@ -1,190 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-  <style>
-    /* === 1. ГЛОБАЛЬНЫЕ НАСТРОЙКИ ПРОЗРАЧНОСТИ === */
-    :root {
-       color-scheme: only light;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <style>
+        :root {
+            color-scheme: only light;
+        }
 
-    * {
-      background-color: transparent !important;
-      background: transparent !important;
-      -webkit-tap-highlight-color: rgba(0,0,0,0);
-    }
+        /* Обнуляем фон и отступы */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: transparent !important;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+            display: flex;
+            align-items: flex-end; /* Прижимаем к низу */
+            justify-content: center;
+            -webkit-font-smoothing: antialiased;
+        }
 
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100vh;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-      pointer-events: none;
-    }
+        /* Контейнер для анимации появления */
+        #banner-container {
+            width: 92%;
+            max-width: 400px;
+            margin-bottom: calc(env(safe-area-inset-bottom) + 15px);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            pointer-events: none;
+        }
 
-    /* === 2. СТИЛИ СЦЕН === */
-    .scene {
-      position: absolute;
-      width: 95%;
-      max-width: 380px;
-      opacity: 0;
-      transition: all 0.5s ease;
-      display: flex;
-      justify-content: center;
-    }
+        #banner-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
 
-    .scene.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
+        /* Стили самой карточки (Glassmorphism) */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8) !important;
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            backdrop-filter: blur(15px) saturate(180%);
+            border-radius: 20px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border: 0.5px solid rgba(255, 255, 255, 0.4);
+        }
 
-    /* === 3. ГЕОМЕТРИЯ КАРТОЧКИ === */
-    .banner-card {
-      width: 100%;
-      background: none !important;
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-      border: none !important;
-      padding: 10px 15px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      box-sizing: border-box;
-    }
+        .product-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
 
-    .instruction-layout {
-      align-items: center; 
-    }
+        .brand-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(0, 0, 0, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-    .text-block-down {
-      text-align: left;
-      width: 100%;
-      margin-top: 15px;
-    }
+        .product-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #000;
+        }
 
-    .buy-layout {
-      flex-direction: row;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      text-align: left;
-    }
+        .price {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
 
-    /* === 4. ТЕКСТ === */
-    .brand-title {
-      color: #000;
-      font-size: 16px;
-      font-weight: 800;
-      margin: 0;
-      text-shadow: 0 0 10px rgba(255,255,255,0.8);
-    }
+        /* Кнопка действия */
+        .cta-button {
+            background-color: #007AFF !important; /* Нативный синий Apple */
+            color: #fff !important;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0, 122, 255, 0.3);
+        }
 
-    .instruction-text,
-    .product-info {
-      color: #000;
-      font-size: 14px;
-      font-weight: 600;
-      margin: 2px 0 0;
-    }
+        .cta-button:active {
+            transform: scale(0.95);
+        }
 
-    .url-info {
-      font-size: 7px;
-      opacity: 0.5;
-      color: #000;
-    }
-
-    .buy-button {
-      color: #007AFF;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 18px;
-      background: white !important;
-      padding: 4px 10px;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    /* === 5. АНИМАЦИЯ DOTS === */
-    .dots-container {
-      display: flex;
-      gap: 6px;
-      justify-content: center;
-      width: 100%;
-    }
-
-    /* ✅ ИСПРАВЛЕННЫЙ БЛОК */
-    .dot {
-      width: 6px;
-      height: 6px;
-      background-color: #000 !important;
-      border-radius: 50%;
-      animation: jump 1.4s infinite ease-in-out;
-    }
-
-    .dot:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-
-    @keyframes jump {
-      0%, 100% {
-        transform: translateY(0);
-        opacity: 0.3;
-      }
-      50% {
-        transform: translateY(-4px);
-        opacity: 0.8;
-      }
-    }
-  </style>
+    </style>
 </head>
 <body>
 
-  <div id="scene-instruction" class="scene active">
-    <div class="banner-card instruction-layout">
-      <div class="dots-container">
-        <div class="dot"></div>
-        <div class="dot"></div>
-      </div>
-      <div class="text-block-down">
-        <div class="brand-title">Find a surface to place the model</div>
-        <div class="instruction-text">Pinch to resize</div>
-      </div>
+    <div id="banner-container">
+        <div class="glass-card">
+            <div class="product-info">
+                <span class="brand-name">Moon x Hello Kitty</span>
+                <span class="product-title">Teeth Whitening</span>
+                <span class="price">$39.99</span>
+            </div>
+            <a href="https://moonoralbeauty.com/products/moon-x-hello-kitty%C2%AE-teeth-whitening-pen-duo" 
+               class="cta-button" 
+               target="_blank">
+                Buy
+            </a>
+        </div>
     </div>
-  </div>
 
-  <div id="scene-buy" class="scene">
-    <div class="banner-card buy-layout">
-      <div class="text-content">
-        <div class="brand-title">Moon</div>
-        <div class="product-info">Oral beauty, $39.99</div>
-        <div class="url-info">moonoralbeauty.com</div>
-      </div>
-      <a href="https://www.weis.world/ua/campaign" class="buy-button">Buy</a>
-    </div>
-  </div>
-
-  <script>
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        const inst = document.getElementById('scene-instruction');
-        const buy = document.getElementById('scene-buy');
-
-        inst.style.opacity = '0';
-
-        setTimeout(() => {
-          inst.classList.remove('active');
-          buy.classList.add('active');
-        }, 500);
-      }, 7000);
-    });
-  </script>
+    <script>
+        window.addEventListener('load', () => {
+            // Задержка 4 секунды: даем пользователю время найти поверхность
+            // и даем системному тексту "Find a surface" исчезнуть.
+            setTimeout(() => {
+                const container = document.getElementById('banner-container');
+                container.classList.add('visible');
+            }, 4000);
+        });
+    </script>
 
 </body>
 </html>

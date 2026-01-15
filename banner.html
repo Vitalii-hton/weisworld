@@ -2,43 +2,40 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
-  />
-
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <style>
     :root {
       color-scheme: only light;
     }
 
-    html,
-    body {
+    html, body {
       margin: 0;
       padding: 0;
       width: 100%;
-      height: 100%;
-      background-color: transparent;
+      /* Изменено на 100%, чтобы контент центрировался во фрейме баннера */
+      height: 100%; 
+      background-color: transparent !important;
       overflow: hidden;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+      /* Центрируем содержимое баннера по вертикали и горизонтали */
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     /* === КОНТЕЙНЕР БАННЕРА === */
     .banner-root {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: env(safe-area-inset-bottom);
+      width: 92%;
+      max-width: 380px;
       display: flex;
       justify-content: center;
-      padding-bottom: 20px;
       pointer-events: none;
+      /* Убрали position: fixed, так как фрейм баннера сам по себе ограничен */
     }
 
     /* === СЦЕНЫ === */
     .scene {
-      width: 92%;
-      max-width: 380px;
+      width: 100%;
       display: none;
       pointer-events: auto;
     }
@@ -50,16 +47,18 @@
     /* === КАРТОЧКА === */
     .banner-card {
       width: 100%;
-      background: rgba(255, 255, 255, 0.7);
-      border: 0.5px solid rgba(255, 255, 255, 0.3);
+      /* Добавили backdrop-filter для "стеклянного" эффекта */
+      background: rgba(255, 255, 255, 0.8) !important;
+      -webkit-backdrop-filter: blur(15px);
+      backdrop-filter: blur(15px);
+      border: 0.5px solid rgba(255, 255, 255, 0.4);
       border-radius: 18px;
       padding: 12px 18px;
       box-sizing: border-box;
-      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       display: flex;
     }
 
-    /* === ЛЕЙАУТЫ === */
     .instruction-layout {
       flex-direction: column;
       align-items: center;
@@ -79,8 +78,7 @@
       margin: 0;
     }
 
-    .instruction-text,
-    .product-info {
+    .instruction-text, .product-info {
       color: #000;
       font-size: 14px;
       font-weight: 600;
@@ -99,17 +97,19 @@
       margin-top: 10px;
     }
 
-    /* === КНОПКА === */
-    .buy-button {
-      color: #fff;
+    /* === КНОПКА (ЗАЩИТА ОТ APPLE PAY) === */
+    .action-trigger {
+      color: #fff !important;
       text-decoration: none;
       font-weight: 700;
       font-size: 16px;
-      background: #007AFF;
-      padding: 8px 16px;
+      background: #007AFF !important;
+      padding: 8px 20px;
       border-radius: 10px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       white-space: nowrap;
+      /* Убираем стандартные стили кнопок, которые ищет iOS */
+      -webkit-appearance: none;
     }
 
     /* === DOTS === */
@@ -128,27 +128,17 @@
       animation: jump 1.4s infinite ease-in-out;
     }
 
-    .dot:nth-child(2) {
-      animation-delay: 0.2s;
-    }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
 
     @keyframes jump {
-      0%,
-      100% {
-        transform: translateY(0);
-        opacity: 0.3;
-      }
-      50% {
-        transform: translateY(-4px);
-        opacity: 0.8;
-      }
+      0%, 100% { transform: translateY(0); opacity: 0.3; }
+      50% { transform: translateY(-4px); opacity: 0.8; }
     }
   </style>
 </head>
 
 <body>
   <div class="banner-root">
-    <!-- INSTRUCTION -->
     <div id="scene-instruction" class="scene active">
       <div class="banner-card instruction-layout">
         <div class="dots-container">
@@ -162,7 +152,6 @@
       </div>
     </div>
 
-    <!-- BUY -->
     <div id="scene-buy" class="scene">
       <div class="banner-card buy-layout">
         <div class="text-content">
@@ -170,11 +159,7 @@
           <div class="product-info">Oral beauty, $39.99</div>
           <div class="url-info">moonoralbeauty.com</div>
         </div>
-        <a
-          href="https://www.weis.world/ua/campaign"
-          class="buy-button"
-          >Buy</a
-        >
+        <a href="https://www.weis.world/ua/campaign" class="action-trigger">Shop</a>
       </div>
     </div>
   </div>
@@ -184,9 +169,10 @@
       setTimeout(function () {
         var inst = document.getElementById("scene-instruction");
         var buy = document.getElementById("scene-buy");
-
-        inst.classList.remove("active");
-        buy.classList.add("active");
+        if(inst && buy) {
+          inst.classList.remove("active");
+          buy.classList.add("active");
+        }
       }, 8000);
     });
   </script>

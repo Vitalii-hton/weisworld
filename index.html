@@ -8,48 +8,16 @@
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
   <style>
-    body {
-      text-align: center;
-      padding: 20px;
-      font-family: sans-serif;
-      background-color: #fff;
-      margin: 0;
-    }
-
-    /* Стили для кнопок */
+    body { text-align: center; padding: 20px; font-family: sans-serif; background-color: #fff; margin: 0; }
     .ar-button {
-      background-color: #e40b29;
-      color: white;
-      padding: 12px 24px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-      margin: 10px;
-      display: none; /* Скрыты по умолчанию, включаются через JS */
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      transition: background-color 0.3s;
+      background-color: #e40b29; color: white; padding: 14px 28px; border: none;
+      border-radius: 8px; cursor: pointer; font-size: 16px; margin: 10px;
+      display: none; font-weight: bold; text-transform: uppercase;
     }
-
-    .ar-button:hover {
-      background-color: #b30920;
-    }
-
-    /* Оформление окна предпросмотра */
+    .ar-button:hover { background-color: #b30920; }
     model-viewer {
-      width: 100%;
-      max-width: 600px;
-      height: 500px;
-      border-radius: 12px;
-      background: #f0f0f0;
-      margin: 20px auto;
-      display: block;
-    }
-
-    #button-container {
-      min-height: 60px;
+      width: 100%; max-width: 600px; height: 500px;
+      border-radius: 12px; background: #f0f0f0; margin: 20px auto; display: block;
     }
   </style>
 </head>
@@ -73,7 +41,7 @@
     auto-rotate
     autoplay
     ar
-    ar-modes="quick-look scene-viewer webxr"
+    ar-modes="scene-viewer quick-look webxr" 
     link="https://moonoralbeauty.com/products/moon-x-hello-kitty%C2%AE-teeth-whitening-pen-duo"
     title="Moon x Hello Kitty">
   </model-viewer>
@@ -85,82 +53,53 @@
     const openBtn = document.getElementById('open-browser');
 
     const productUrl = "https://moonoralbeauty.com/products/moon-x-hello-kitty%C2%AE-teeth-whitening-pen-duo";
+    const glbUrl = "https://vitalii-hton.github.io/weisworld/glbanimations26.glb";
+    
     const ua = navigator.userAgent || navigator.vendor || window.opera;
-
-    // Определяем среду
     const isInstagram = /Instagram|FBAN|FBAV|FBSV|FB_IAB/i.test(ua);
     const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
     const isAndroid = /Android/.test(ua);
 
-    // --- 1. ЛОГИКА ОТОБРАЖЕНИЯ КНОПОК ---
+    // 1. Показ кнопок
     if (isInstagram) {
       openBtn.style.display = 'inline-block';
     } else if (isAndroid) {
       androidBtn.style.display = 'inline-block';
-    } else if (isIOS) {
-      iosBtn.style.display = 'inline-block';
     } else {
-      // Для десктопа показываем общую кнопку
-      iosBtn.innerText = "Open AR";
       iosBtn.style.display = 'inline-block';
     }
 
-    // --- 2. ОБРАБОТЧИКИ НАЖАТИЙ ---
-
-    // Универсальная функция запуска (теперь безопасная для Android)
-    const activateAR = () => {
+    // 2. Обработчик для iOS
+    iosBtn.addEventListener('click', () => {
       arViewer.activateAR();
-    };
+    });
 
-    iosBtn.addEventListener('click', activateAR);
-    androidBtn.addEventListener('click', activateAR);
+    // 3. Обработчик для Android (Принудительный запуск через Intent)
+    androidBtn.addEventListener('click', () => {
+      // Пытаемся запустить через стандартный метод
+      arViewer.activateAR();
+      
+      // Запасной вариант: если через 500мс ничего не произошло, пробуем прямой Intent
+      setTimeout(() => {
+        const intent = `intent://arvr.google.com/scene-viewer/1.0?file=${glbUrl}&link=${encodeURIComponent(productUrl)}&title=Moon%20x%20Hello%20Kitty#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;`;
+        window.location.href = intent;
+      }, 500);
+    });
 
-    // Специальное событие для баннера в iOS Quick Look
+    // Событие для баннера iOS
     arViewer.addEventListener('quick-look-button-tapped', () => {
       window.open(productUrl, '_blank');
     });
 
-    // --- 3. БЕЗОПАСНЫЙ АВТОЗАПУСК ---
-    // Выполняется только если модель загрузилась и это не Instagram
-    window.addEventListener("load", () => {
-      if (!isInstagram) {
-        arViewer.addEventListener('load', () => {
-          setTimeout(() => {
-            // На некоторых Android устройствах автозапуск все еще может блокироваться 
-            // политикой браузера, но это уже не вызовет вылет страницы.
-            arViewer.activateAR();
-          }, 1500);
-        }, { once: true });
-      }
-    });
-
-    // --- 4. ВЫХОД ИЗ INSTAGRAM (In-App Browser) ---
-    function tryOpen(urlToOpen) {
-      const a = document.createElement('a');
-      a.href = urlToOpen;
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(() => { document.body.removeChild(a); }, 2000);
-    }
-
+    // 4. Логика для In-App (Instagram)
     openBtn.addEventListener('click', (e) => {
       e.preventDefault();
       const currentUrl = window.location.href.replace(/^https?:\/\//i, '');
-      
       if (isIOS) {
-        tryOpen('x-safari-https://' + currentUrl);
+        window.location.href = 'x-safari-https://' + currentUrl;
       } else {
-        // Правильный Intent для открытия Chrome на Android
-        tryOpen('intent://' + currentUrl + '#Intent;scheme=https;package=com.android.chrome;end');
+        window.location.href = 'intent://' + currentUrl + '#Intent;scheme=https;package=com.android.chrome;end';
       }
-
-      setTimeout(() => {
-        if (confirm('Если сайт не открылся в браузере — показать инструкцию?')) {
-          window.location.href = '/open-in-safari-instructions.html';
-        }
-      }, 2500);
     });
   </script>
 </body>
